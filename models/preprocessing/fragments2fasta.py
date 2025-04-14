@@ -1,15 +1,23 @@
 import json
 import argparse
-
+import random
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('fragments_json')
-    parser.add_argument('species_txt')
+    parser.add_argument('fragments_json_1')
+    parser.add_argument('fragments_json_2')
     args = parser.parse_args()
-    fragments = json.load(open(args.fragments_json))
-    species_list = [line.strip() for line in
-                    open(args.species_txt).readlines()]
-    assert len(fragments) == len(species_list)
-    for i, (fragment, species) in enumerate(zip(fragments, species_list)):
-        print(f'>{species} {i}\n{fragment}')
+
+    # Cargar fragmentos desde ambos archivos JSON
+    fragments_1 = json.load(open(args.fragments_json_1))
+    fragments_2 = json.load(open(args.fragments_json_2))
+
+    # Combinar todos los fragmentos en una sola lista
+    all_fragments = fragments_1 + fragments_2
+
+    # Mezclar aleatoriamente la lista combinada
+    random.shuffle(all_fragments)
+    with open('output.fasta', 'w', encoding='utf-8') as fasta_file:
+        # Imprimir en formato FASTA con identificadores numerados
+        for i, fragment in enumerate(all_fragments):
+            print(f'>seq_{i}\n{fragment}')
